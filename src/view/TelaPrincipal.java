@@ -46,6 +46,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 //}
 		
 	}
+	
+	public void OutputTextUpdate(String texto) {
+		txtOutput.setText(txtOutput.getText() + "\n" + texto);
+		
+	}
 
 	/**
 	 * This method is called from within the constructor to initialize the
@@ -532,7 +537,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 		
 		String path = pastaProjeto.getAbsolutePath().toString()  ;
 
-		txtOutput.setText("caminho" + path);
+		OutputTextUpdate("Procurando em pasta: " + path);
 
 		scanner.setPath(path);
 		try {
@@ -555,11 +560,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
 		
 		Compilador comp = new Compilador(inter.getListaJava(), path);
 		try {
+			OutputTextUpdate("Compilando os arquivos...");
 			comp.Compile();
-			txtOutput.setText(comp.getOutputText().toString());
+			OutputTextUpdate("Compilado com sucesso!");
+			OutputTextUpdate(comp.getOutputText());
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(rootPane, "Erro ao compilar o projeto\nerro:"+ ex.getMessage(), "deu ruim", 0);
-			txtOutput.setText(ex.getMessage());
+			OutputTextUpdate("Erro ao compilar: "  + ex.getMessage());
 		}
 		
 			
