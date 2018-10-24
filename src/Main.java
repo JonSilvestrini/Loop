@@ -48,7 +48,7 @@ public class Main {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setAcceptAllFileFilterUsed(false);
 				fc.showDialog(fc, "Abrir Pasta");
-				File pastaProjeto = fc.getCurrentDirectory();
+				File pastaProjeto = fc.getSelectedFile();
 				new TelaPrincipal(pastaProjeto).setVisible(true);
 			}
 		});
