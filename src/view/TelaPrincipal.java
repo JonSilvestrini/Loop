@@ -5,8 +5,10 @@
  */
 package view;
 
+import File.FileManager;
 import java.awt.Color;
 import java.io.File;
+import java.util.List;
 
 /**
  *
@@ -22,6 +24,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
 	
 	public TelaPrincipal(File pastaProjeto) {
 		this.pastaProjeto = pastaProjeto;
+                FileManager fm = new FileManager(this.pastaProjeto);
+                List<File> arquivos = fm.ScanFiles();
+                abasTexto.remove(0);
+                for (File arquivo : arquivos){
+                    abasTexto.addTab("teste", rootPane);
+                }
 		initComponents();
 	}
 
@@ -293,7 +301,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         );
         jInternalFrame1Layout.setVerticalGroup(
             jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 209, Short.MAX_VALUE)
+            .addGap(0, 215, Short.MAX_VALUE)
         );
 
         abasTexto.setName("Novo Arquivo"); // NOI18N
