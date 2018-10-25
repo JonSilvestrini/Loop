@@ -20,11 +20,21 @@
         </Menu>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPopupMenu" name="jPopupMenu1">
+    <Container class="javax.swing.JPopupMenu" name="jPopupMenuOutput">
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
+      <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem19">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Limpar"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem19ActionPerformed"/>
+          </Events>
+        </MenuItem>
+      </SubComponents>
     </Container>
     <Menu class="javax.swing.JMenuBar" name="jMenuBar2">
       <Properties>
@@ -122,6 +132,9 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Sair"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem5ActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -273,6 +286,9 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Iniciar"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="IniciarPorMenu"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem15">
               <Properties>
@@ -415,7 +431,7 @@
                       <Group type="102" attributes="0">
                           <Component id="abasTexto" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jSeparator5" min="-2" max="-2" attributes="0"/>
+                          <Component id="jSeparator5" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jInternalFrame1" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -776,6 +792,11 @@
           </SubComponents>
         </Container>
         <Component class="javax.swing.JSeparator" name="jSeparator5">
+          <Properties>
+            <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+              <Color id="Cursor de Seta Que Aponta para Cima"/>
+            </Property>
+          </Properties>
         </Component>
         <Container class="javax.swing.JInternalFrame" name="jInternalFrame1">
           <Properties>
@@ -810,6 +831,9 @@
                 <Component class="javax.swing.JTextPane" name="txtOutput">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
+                    <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                      <ComponentRef name="jPopupMenuOutput"/>
+                    </Property>
                   </Properties>
                 </Component>
               </SubComponents>
