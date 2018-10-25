@@ -37,7 +37,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 	public TelaPrincipal(File pastaProjeto) {
 		this.pastaProjeto = pastaProjeto;
                 FileManager fm = new FileManager(this.pastaProjeto);
-                List<File> arquivos = fm.ScanFiles();
+//                List<File> arquivos = fm.ScanFiles();
 		initComponents();
                 //abasTexto.remove(1);
                 //for (File arquivo : arquivos){
@@ -73,7 +73,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 jButton5 = new javax.swing.JButton();
                 jButton6 = new javax.swing.JButton();
                 jButton11 = new javax.swing.JButton();
-                jButton12 = new javax.swing.JButton();
+                bntExecutar = new javax.swing.JButton();
                 jButton13 = new javax.swing.JButton();
                 jButton14 = new javax.swing.JButton();
                 jButton15 = new javax.swing.JButton();
@@ -84,6 +84,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 jSeparator9 = new javax.swing.JSeparator();
                 jSeparator5 = new javax.swing.JSeparator();
                 jInternalFrame1 = new javax.swing.JInternalFrame();
+                jScrollPane1 = new javax.swing.JScrollPane();
+                txtOutput = new javax.swing.JTextPane();
                 abasTexto = new javax.swing.JTabbedPane();
                 jMenuBar2 = new javax.swing.JMenuBar();
                 jMenu3 = new javax.swing.JMenu();
@@ -205,11 +207,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 jButton11.setBorder(null);
                 jButton11.setOpaque(false);
 
-                jButton12.setBackground(new java.awt.Color(51, 51, 51));
-                jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/play.png"))); // NOI18N
-                jButton12.setBorder(null);
-                jButton12.setBorderPainted(false);
-                jButton12.setOpaque(false);
+                bntExecutar.setBackground(new java.awt.Color(51, 51, 51));
+                bntExecutar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/play.png"))); // NOI18N
+                bntExecutar.setBorder(null);
+                bntExecutar.setBorderPainted(false);
+                bntExecutar.setOpaque(false);
+                bntExecutar.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                Executar(evt);
+                        }
+                });
 
                 jButton13.setBackground(new java.awt.Color(51, 51, 51));
                 jButton13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/playepause.png"))); // NOI18N
@@ -268,7 +275,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(bntExecutar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton13, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -292,7 +299,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                 .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(bntExecutar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButton13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButton15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -305,15 +312,18 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 jInternalFrame1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
                 jInternalFrame1.setVisible(true);
 
+                txtOutput.setEditable(false);
+                jScrollPane1.setViewportView(txtOutput);
+
                 javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
                 jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
                 jInternalFrame1Layout.setHorizontalGroup(
                         jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1)
                 );
                 jInternalFrame1Layout.setVerticalGroup(
                         jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 215, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
                 );
 
                 abasTexto.setName("Novo Arquivo"); // NOI18N
@@ -520,8 +530,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
 		
 		ScanFiles scanner = new ScanFiles();
 		
-		String path = pastaProjeto.getAbsolutePath().toString();
-		JOptionPane.showMessageDialog(rootPane, "caminho"+ path);
+		String path = pastaProjeto.getAbsolutePath().toString()  ;
+
+		txtOutput.setText("caminho" + path);
 
 		scanner.setPath(path);
 		try {
@@ -545,9 +556,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
 		Compilador comp = new Compilador(inter.getListaJava(), path);
 		try {
 			comp.Compile();
+			txtOutput.setText(comp.getOutputText().toString());
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(rootPane, "Erro ao compilar o projeto\nerro:"+ ex.getMessage(), "deu ruim", 0);
+			txtOutput.setText(ex.getMessage());
 		}
+		
+			
         }//GEN-LAST:event_Executar
 
 	/**
@@ -559,9 +574,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JTabbedPane abasTexto;
+        private javax.swing.JButton bntExecutar;
         private javax.swing.JButton jButton1;
         private javax.swing.JButton jButton11;
-        private javax.swing.JButton jButton12;
         private javax.swing.JButton jButton13;
         private javax.swing.JButton jButton14;
         private javax.swing.JButton jButton15;
@@ -605,6 +620,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         private javax.swing.JPanel jPanel2;
         private javax.swing.JPanel jPanel4;
         private javax.swing.JPopupMenu jPopupMenu1;
+        private javax.swing.JScrollPane jScrollPane1;
         private javax.swing.JPopupMenu.Separator jSeparator1;
         private javax.swing.JPopupMenu.Separator jSeparator2;
         private javax.swing.JPopupMenu.Separator jSeparator3;
@@ -614,5 +630,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         private javax.swing.JSeparator jSeparator7;
         private javax.swing.JSeparator jSeparator8;
         private javax.swing.JSeparator jSeparator9;
+        private javax.swing.JTextPane txtOutput;
         // End of variables declaration//GEN-END:variables
 }
