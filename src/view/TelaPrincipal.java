@@ -36,16 +36,24 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
 	public TelaPrincipal(File pastaProjeto) {
 		this.pastaProjeto = pastaProjeto;
-                FileManager fm = new FileManager(this.pastaProjeto);
-//                List<File> arquivos = fm.ScanFiles();
+                this.fm = new FileManager(this.pastaProjeto);
 		initComponents();
-                //abasTexto.remove(1);
-                //for (File arquivo : arquivos){
-                    abasTexto.addTab("Novo Arquivo", new PainelEdicao().montarPainel());
-		    abasTexto.addTab("Novo Arquivo", new PainelEdicao().montarPainel());
-                //}
+                carregarArquivos();
 		
 	}
+	
+	public void carregarArquivos(){
+		List<File> files = fm.ScanFiles();
+		if (files.isEmpty()){
+			abasTexto.addTab("Novo Arquivo", new PainelEdicao().montarPainel());
+		} else {
+			for (final File arq : files){
+				abasTexto.addTab(arq.getName(), new PainelEdicao().montarPainel());
+			}
+		}
+	}
+	
+	
 
 	/**
 	 * This method is called from within the constructor to initialize the

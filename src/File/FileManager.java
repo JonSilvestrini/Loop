@@ -6,6 +6,7 @@
 package File;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,13 +16,13 @@ import java.util.List;
 public class FileManager {
     
     private File path;
-    private List<File> arquivos;
+    private List<File> arquivos = new ArrayList<File>();
     
     public FileManager(File $path){
         this.path = $path;
     }
     
-    public List ScanFiles(){
+    public List<File> ScanFiles(){
         for (final File arquivo : this.path.listFiles()){
             if (arquivo.getName().endsWith(".classe")){
                 arquivos.add(arquivo);
