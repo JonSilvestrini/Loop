@@ -54,6 +54,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
 	}
 	
 	
+	public void OutputTextUpdate(String texto) {
+		txtOutput.setText(txtOutput.getText() + "\n" + texto);
+		
+	}
 
 	/**
 	 * This method is called from within the constructor to initialize the
