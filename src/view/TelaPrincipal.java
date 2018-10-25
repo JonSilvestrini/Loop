@@ -36,14 +36,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
 	public TelaPrincipal(File pastaProjeto) {
 		this.pastaProjeto = pastaProjeto;
-            :    FileManager fm = new FileManager(this.pastaProjeto);
+                FileManager fm = new FileManager(this.pastaProjeto);
                 List<File> arquivos = fm.ScanFiles();
 		initComponents();
                 //abasTexto.remove(1);
                 //for (File arquivo : arquivos){
                     abasTexto.addTab("Novo Arquivo", new PainelEdicao().montarPainel());
 		    abasTexto.addTab("Novo Arquivo", new PainelEdicao().montarPainel());
-		    pastaProjeto.
                 //}
 		
 	}
