@@ -7,6 +7,8 @@ package view;
 
 import File.FileManager;
 import java.awt.Color;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -34,27 +36,61 @@ public class TelaPrincipal extends javax.swing.JFrame {
 	FileManager fm;
 	List<File> arquivos;
 
+	private Compilador comp;
+
 	public TelaPrincipal(File pastaProjeto) {
 		this.pastaProjeto = pastaProjeto;
-                this.fm = new FileManager(this.pastaProjeto);
+		this.fm = new FileManager(this.pastaProjeto);
 		initComponents();
-                carregarArquivos();
-		
+		carregarArquivos();
+		comp = new Compilador() ;
+
+		comp.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent pce) {
+				OutputTextUpdate((String) pce.getNewValue());
+			}
+		} );
+
+	}
+
+	public void MensagemOutput(String texto ) {
+		char canto = '+';
+		char linha = '=';
+		char lateral = '|';
+
+		String linha1 = ""+canto;
+		for (int i = 0; i < (texto.length() + 2); i++) 
+			linha1+=linha;
+		linha1+=canto+"\n";
+		String linha2 = lateral+" "+texto+" "+lateral+"\n";
+		OutputTextUpdate(linha1+linha2+linha1);
+
 	}
 
 	public void Compilar () {
+
+
+		
 
 		ScanFiles scanner = new ScanFiles();
 		
 		String path = pastaProjeto.getAbsolutePath().toString()  ;
 		
-		OutputTextUpdate("+---------------------------+\nProcurando em pasta:" + path + "\n+---------------------------+\n");
+		MensagemOutput("Procurando em pasta: " +path);
 		
 		scanner.setPath(path);
 		try {
 			scanner.ScanClasses();
 		} catch (IOException ex) {
+			MensagemOutput("Erro ao encontrar os arquivos .classe");
 			JOptionPane.showMessageDialog(rootPane, "Erro ao encontrar os arquivos .classe\nErro:"+ex.getMessage(), "Deu ruim",0);
+			return ;
+		}
+
+		if (scanner.getListaArquivos().isEmpty() ) { 
+			MensagemOutput("Erro ao encontrar os arquivos .classe");
+			return;
 		}
 		
 		List<Arquivo> arquivos = scanner.getListaArquivos();
@@ -69,15 +105,24 @@ public class TelaPrincipal extends javax.swing.JFrame {
 		inter.interpretar(conversor.getListaInter());
 		
 		
-		Compilador comp = new Compilador(inter.getListaJava(), path);
 		try {
-			OutputTextUpdate("+---------------------------+\nCompilando os arquivos...\n+---------------------------+\n");
-			comp.Compile();
-			OutputTextUpdate("+---------------------------+\nCompilado com sucesso!\n+---------------------------+\n");
-			OutputTextUpdate(comp.getOutputText());
+			Thread.sleep(1000);
+		} catch (InterruptedException ex) {
+			Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		comp.setArquivos(inter.getListaJava());
+		comp.setPath(path);
+		try {
+			MensagemOutput("Compilando os arquivos...");
+			if (comp.CleanCompile())
+				MensagemOutput("Compilado com sucesso!");
+
+			else 
+				MensagemOutput("Erro ao Compilar");
+
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(rootPane, "Erro ao compilar o projeto\nerro:"+ ex.getMessage(), "deu ruim", 0);
-			OutputTextUpdate("Erro ao compilar: "  + ex.getMessage());
+			MensagemOutput("Erro ao compilar!");
 		}
 	}
 	
@@ -121,7 +166,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jButton9 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnAbrir = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
@@ -144,7 +189,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        MenuAbrir = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         jMenuItem4 = new javax.swing.JMenuItem();
@@ -233,13 +278,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButton1.setOpaque(false);
 
-        jButton2.setBackground(new java.awt.Color(51, 51, 51));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/abrir_1.png"))); // NOI18N
-        jButton2.setBorder(null);
-        jButton2.setOpaque(false);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnAbrir.setBackground(new java.awt.Color(51, 51, 51));
+        btnAbrir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/abrir_1.png"))); // NOI18N
+        btnAbrir.setBorder(null);
+        btnAbrir.setOpaque(false);
+        btnAbrir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnAbrirActionPerformed(evt);
             }
         });
 
@@ -319,7 +364,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -355,7 +400,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
             .addComponent(jSeparator6)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                 .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnAbrir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -377,6 +422,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jInternalFrame1.setVisible(true);
 
         txtOutput.setEditable(false);
+        txtOutput.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
+        txtOutput.setToolTipText("Output da programação ");
         txtOutput.setComponentPopupMenu(jPopupMenuOutput);
         jScrollPane1.setViewportView(txtOutput);
 
@@ -439,11 +486,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenuItem2.setLabel("Novo");
         jMenu3.add(jMenuItem2);
 
-        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem3.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
-        jMenuItem3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Abrir.png"))); // NOI18N
-        jMenuItem3.setLabel("Abrir");
-        jMenu3.add(jMenuItem3);
+        MenuAbrir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        MenuAbrir.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        MenuAbrir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Abrir.png"))); // NOI18N
+        MenuAbrir.setLabel("Abrir");
+        MenuAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuAbrirActionPerformed(evt);
+            }
+        });
+        jMenu3.add(MenuAbrir);
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem1.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
@@ -597,10 +649,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
 	    // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-	    // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
-
         private void Executar(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Executar
 		new Thread(new Runnable() {
 			public void run () {
@@ -627,6 +675,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
 		this.dispose();
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
+    private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
+		JOptionPane.showMessageDialog(this, "Não tem ninguem");
+    }//GEN-LAST:event_btnAbrirActionPerformed
+
+    private void MenuAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuAbrirActionPerformed
+		JOptionPane.showMessageDialog(this, "Não tem ninguem");
+    }//GEN-LAST:event_MenuAbrirActionPerformed
+
 	/**
 	 * @param args the command line arguments
 	 */
@@ -635,15 +691,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
 	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem MenuAbrir;
     private javax.swing.JTabbedPane abasTexto;
     private javax.swing.JButton bntExecutar;
+    private javax.swing.JButton btnAbrir;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton15;
     private javax.swing.JButton jButton16;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
@@ -672,7 +729,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem18;
     private javax.swing.JMenuItem jMenuItem19;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
