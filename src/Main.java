@@ -42,14 +42,7 @@ public class Main {
 		/* Create and display the form */
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				JFileChooser fc = new JFileChooser();
-				fc.setCurrentDirectory(new java.io.File("."));
-				fc.setDialogTitle("Selecione a pasta do Projeto");
-				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				fc.setAcceptAllFileFilterUsed(false);
-				fc.showDialog(fc, "Abrir Pasta");
-				File pastaProjeto = fc.getSelectedFile();
-				new TelaPrincipal(pastaProjeto).setVisible(true);
+				new TelaPrincipal().setVisible(true);
 			}
 		});
 	}

@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import javabeans.Arquivo;
 import javabeans.Token;
 import javabeans.TokensGenBasico;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import portugoloo.input.ScanFiles;
 import portugoloo.interpretador.*;
@@ -31,112 +32,116 @@ public class TelaPrincipal extends javax.swing.JFrame {
 	/**
 	 * Creates new form TelaPrincipal
 	 */
-	
 	private File pastaProjeto;
 	FileManager fm;
 	List<File> arquivos;
 
 	private Compilador comp;
 
-	public TelaPrincipal(File pastaProjeto) {
-		this.pastaProjeto = pastaProjeto;
+	public TelaPrincipal() {
+		selecionarPastaProjeto();
 		this.fm = new FileManager(this.pastaProjeto);
 		initComponents();
 		carregarArquivos();
-		comp = new Compilador() ;
+		comp = new Compilador();
 
 		comp.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent pce) {
 				OutputTextUpdate((String) pce.getNewValue());
 			}
-		} );
+		});
 
 	}
 
-	public void MensagemOutput(String texto ) {
+	public void selecionarPastaProjeto() {
+		JFileChooser fc = new JFileChooser();
+		fc.setCurrentDirectory(new java.io.File("."));
+		fc.setDialogTitle("Selecione a pasta do Projeto");
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fc.setAcceptAllFileFilterUsed(false);
+		fc.showDialog(fc, "Abrir Pasta");
+		this.pastaProjeto = fc.getSelectedFile();
+	}
+
+	public void MensagemOutput(String texto) {
 		char canto = '+';
 		char linha = '=';
 		char lateral = '|';
 
-		String linha1 = ""+canto;
-		for (int i = 0; i < (texto.length() + 2); i++) 
-			linha1+=linha;
-		linha1+=canto+"\n";
-		String linha2 = lateral+" "+texto+" "+lateral+"\n";
-		OutputTextUpdate(linha1+linha2+linha1);
+		String linha1 = "" + canto;
+		for (int i = 0; i < (texto.length() + 2); i++) {
+			linha1 += linha;
+		}
+		linha1 += canto + "\n";
+		String linha2 = lateral + " " + texto + " " + lateral + "\n";
+		OutputTextUpdate(linha1 + linha2 + linha1);
 
 	}
 
-	public void Compilar () {
-
-
-		
+	public void Compilar() {
 
 		ScanFiles scanner = new ScanFiles();
-		
-		String path = pastaProjeto.getAbsolutePath().toString()  ;
-		
-		MensagemOutput("Procurando em pasta: " +path);
-		
+
+		String path = pastaProjeto.getAbsolutePath().toString();
+
+		MensagemOutput("Procurando em pasta: " + path);
+
 		scanner.setPath(path);
 		try {
 			scanner.ScanClasses();
 		} catch (IOException ex) {
 			MensagemOutput("Erro ao encontrar os arquivos .classe");
-			JOptionPane.showMessageDialog(rootPane, "Erro ao encontrar os arquivos .classe\nErro:"+ex.getMessage(), "Deu ruim",0);
-			return ;
+			JOptionPane.showMessageDialog(rootPane, "Erro ao encontrar os arquivos .classe\nErro:" + ex.getMessage(), "Deu ruim", 0);
+			return;
 		}
 
-		if (scanner.getListaArquivos().isEmpty() ) { 
+		if (scanner.getListaArquivos().isEmpty()) {
 			MensagemOutput("Erro ao encontrar os arquivos .classe");
 			return;
 		}
-		
+
 		List<Arquivo> arquivos = scanner.getListaArquivos();
-		
+
 		List<Token> tokens = new TokensGenBasico().getTokens();
-		
+
 		Converte conversor = new Converte(tokens);
 		conversor.converter(arquivos);
-		
-		
+
 		Interprete inter = new Interprete(tokens);
 		inter.interpretar(conversor.getListaInter());
-		
-		
+
 		comp.setArquivos(inter.getListaJava());
 		comp.setPath(path);
 		try {
 			MensagemOutput("Compilando os arquivos...");
-			if (comp.CleanCompile())
+			if (comp.CleanCompile()) {
 				MensagemOutput("Compilado com sucesso!");
-
-			else 
+			} else {
 				MensagemOutput("Erro ao Compilar");
+			}
 
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(rootPane, "Erro ao compilar o projeto\nerro:"+ ex.getMessage(), "deu ruim", 0);
+			JOptionPane.showMessageDialog(rootPane, "Erro ao compilar o projeto\nerro:" + ex.getMessage(), "deu ruim", 0);
 			MensagemOutput("Erro ao compilar!");
 		}
 	}
-	
-	public void carregarArquivos(){
+
+	public void carregarArquivos() {
 		List<File> files = fm.ScanFiles();
-		if (files.isEmpty()){
+		if (files.isEmpty()) {
 			abasTexto.addTab("Novo Arquivo", new PainelEdicao().montarPainel());
 		} else {
-			for (final File arq : files){
+			for (final File arq : files) {
 				abasTexto.addTab(arq.getName(), new PainelEdicao(arq).montarPainel());
-                                
+
 			}
 		}
 	}
-	
-	
+
 	public void OutputTextUpdate(String texto) {
 		txtOutput.setText(txtOutput.getText() + "\n" + texto);
-		
+
 		txtOutput.setCaretPosition(txtOutput.getDocument().getLength());
 	}
 
@@ -649,36 +654,36 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         private void Executar(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Executar
 		new Thread(new Runnable() {
-			public void run () {
+			public void run() {
 				Compilar();
 			}
 		}).start();
-		
-			
+
+
         }//GEN-LAST:event_Executar
 
     private void jMenuItem19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem19ActionPerformed
-		txtOutput.setText("");
+	    txtOutput.setText("");
     }//GEN-LAST:event_jMenuItem19ActionPerformed
 
     private void IniciarPorMenu(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarPorMenu
-		new Thread(new Runnable() {
-			public void run () {
-				Compilar();
-			}
-		}).start();
+	    new Thread(new Runnable() {
+		    public void run() {
+			    Compilar();
+		    }
+	    }).start();
     }//GEN-LAST:event_IniciarPorMenu
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-		this.dispose();
+	    this.dispose();
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
-		JOptionPane.showMessageDialog(this, "Não tem ninguem");
+	    JOptionPane.showMessageDialog(this, "Não tem ninguem");
     }//GEN-LAST:event_btnAbrirActionPerformed
 
     private void MenuAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuAbrirActionPerformed
-		JOptionPane.showMessageDialog(this, "Não tem ninguem");
+	    JOptionPane.showMessageDialog(this, "Não tem ninguem");
     }//GEN-LAST:event_MenuAbrirActionPerformed
 
 	/**
