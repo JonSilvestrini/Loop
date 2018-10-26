@@ -105,11 +105,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
 		inter.interpretar(conversor.getListaInter());
 		
 		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException ex) {
-			Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-		}
 		comp.setArquivos(inter.getListaJava());
 		comp.setPath(path);
 		try {
