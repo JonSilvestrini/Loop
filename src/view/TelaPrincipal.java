@@ -87,7 +87,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
 			abasTexto.addTab("Novo Arquivo", new PainelEdicao().montarPainel());
 		} else {
 			for (final File arq : files){
-				abasTexto.addTab(arq.getName(), new PainelEdicao().montarPainel());
+				abasTexto.addTab(arq.getName(), new PainelEdicao(arq).montarPainel());
+                                
 			}
 		}
 	}

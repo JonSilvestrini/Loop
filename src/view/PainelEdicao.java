@@ -5,6 +5,10 @@
  */
 package view;
 
+import java.io.File;
+import static java.io.FileDescriptor.in;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -16,6 +20,17 @@ public class PainelEdicao {
 
 	private JTextArea jTextArea1 = new JTextArea();
 	private JScrollPane jScrollPane1 = new JScrollPane();
+        private File arquivo;
+        
+        public PainelEdicao(){}
+        
+        public PainelEdicao(File $arq){
+            this.arquivo = $arq;
+        }
+        
+        public File getArquivo(){
+            return this.arquivo;
+        }
 
 	public JScrollPane montarPainel() {
 		jTextArea1.setBackground(new java.awt.Color(18, 31, 53));
@@ -31,4 +46,9 @@ public class PainelEdicao {
 		jScrollPane1.setViewportView(jTextArea1);
 		return jScrollPane1;
 	}
+        
+        private void loadArquivosPainel() throws FileNotFoundException{
+            FileInputStream fi = new FileInputStream(arquivo.getPath());
+            //jTextArea1.read(fi, jTextArea1.getDocument(), 0);
+        }
 }
