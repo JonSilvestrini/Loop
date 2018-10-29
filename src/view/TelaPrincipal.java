@@ -159,7 +159,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
         jPopupMenuOutput = new javax.swing.JPopupMenu();
-        jMenuItem19 = new javax.swing.JMenuItem();
+        jMenuItemLimparOutput = new javax.swing.JMenuItem();
         jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jButton7 = new javax.swing.JButton();
@@ -191,11 +191,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         MenuAbrir = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuSalvar = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         jMenuItem4 = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem5 = new javax.swing.JMenuItem();
+        jMenuSair = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
@@ -208,7 +208,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItem13 = new javax.swing.JMenuItem();
         jMenu5 = new javax.swing.JMenu();
-        jMenuItem14 = new javax.swing.JMenuItem();
+        jMenuItemIniciar = new javax.swing.JMenuItem();
         jMenuItem15 = new javax.swing.JMenuItem();
         jMenuItem16 = new javax.swing.JMenuItem();
         jMenuItem17 = new javax.swing.JMenuItem();
@@ -221,13 +221,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenu2.setText("Edit");
         jMenuBar1.add(jMenu2);
 
-        jMenuItem19.setText("Limpar");
-        jMenuItem19.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemLimparOutput.setText("Limpar");
+        jMenuItemLimparOutput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem19ActionPerformed(evt);
+                jMenuItemLimparOutputActionPerformed(evt);
             }
         });
-        jPopupMenuOutput.add(jMenuItem19);
+        jPopupMenuOutput.add(jMenuItemLimparOutput);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("LOOP");
@@ -501,16 +501,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
         });
         jMenu3.add(MenuAbrir);
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem1.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
-        jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Salvar.png"))); // NOI18N
-        jMenuItem1.setText("Salvar");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        jMenuSalvar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuSalvar.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        jMenuSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Salvar.png"))); // NOI18N
+        jMenuSalvar.setText("Salvar");
+        jMenuSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                jMenuSalvarActionPerformed(evt);
             }
         });
-        jMenu3.add(jMenuItem1);
+        jMenu3.add(jMenuSalvar);
         jMenu3.add(jSeparator3);
 
         jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
@@ -520,16 +520,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenu3.add(jMenuItem4);
         jMenu3.add(jSeparator4);
 
-        jMenuItem5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem5.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
-        jMenuItem5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Sair.png"))); // NOI18N
-        jMenuItem5.setText("Sair");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+        jMenuSair.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        jMenuSair.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        jMenuSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Sair.png"))); // NOI18N
+        jMenuSair.setText("Sair");
+        jMenuSair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
+                jMenuSairActionPerformed(evt);
             }
         });
-        jMenu3.add(jMenuItem5);
+        jMenu3.add(jMenuSair);
 
         jMenuBar2.add(jMenu3);
 
@@ -553,11 +553,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenuItem8.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
         jMenuItem8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Cortar.png"))); // NOI18N
         jMenuItem8.setText("Cortar");
-        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem8ActionPerformed(evt);
-            }
-        });
         jMenu4.add(jMenuItem8);
 
         jMenuItem9.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
@@ -596,16 +591,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenu5.setText("Compilar");
         jMenu5.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
 
-        jMenuItem14.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F6, 0));
-        jMenuItem14.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
-        jMenuItem14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Iniciar.png"))); // NOI18N
-        jMenuItem14.setText("Iniciar");
-        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemIniciar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F6, 0));
+        jMenuItemIniciar.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        jMenuItemIniciar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Iniciar.png"))); // NOI18N
+        jMenuItemIniciar.setText("Iniciar");
+        jMenuItemIniciar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 IniciarPorMenu(evt);
             }
         });
-        jMenu5.add(jMenuItem14);
+        jMenu5.add(jMenuItemIniciar);
 
         jMenuItem15.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F6, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem15.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
@@ -654,10 +649,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem8ActionPerformed
-
         private void Executar(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Executar
             new Thread(new Runnable() {
                 public void run() {
@@ -668,9 +659,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         }//GEN-LAST:event_Executar
 
-    private void jMenuItem19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem19ActionPerformed
+    private void jMenuItemLimparOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLimparOutputActionPerformed
         txtOutput.setText("");
-    }//GEN-LAST:event_jMenuItem19ActionPerformed
+    }//GEN-LAST:event_jMenuItemLimparOutputActionPerformed
 
     private void IniciarPorMenu(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarPorMenu
         new Thread(new Runnable() {
@@ -680,9 +671,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }).start();
     }//GEN-LAST:event_IniciarPorMenu
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+    private void jMenuSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuSairActionPerformed
         this.dispose();
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
+    }//GEN-LAST:event_jMenuSairActionPerformed
 
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
         JOptionPane.showMessageDialog(this, "Não tem ninguem");
@@ -692,14 +683,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Não tem ninguem");
     }//GEN-LAST:event_MenuAbrirActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void jMenuSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuSalvarActionPerformed
         // TODO add your handling code here:
         for (int i = 0; i < abasTexto.getComponentCount(); i++) {
             Component painel = abasTexto.getComponent(i);
             
         }
         
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_jMenuSalvarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -735,24 +726,24 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu6;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuBar jMenuBar2;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
-    private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem16;
     private javax.swing.JMenuItem jMenuItem17;
     private javax.swing.JMenuItem jMenuItem18;
-    private javax.swing.JMenuItem jMenuItem19;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
+    private javax.swing.JMenuItem jMenuItemIniciar;
+    private javax.swing.JMenuItem jMenuItemLimparOutput;
+    private javax.swing.JMenuItem jMenuSair;
+    private javax.swing.JMenuItem jMenuSalvar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;

@@ -63,7 +63,7 @@ public class PainelEdicao {
 	}
 	
 	private void loadArquivosPainel() throws FileNotFoundException, IOException {
-                this.jTextArea1.setText("");
+		this.jTextArea1.setText("");
 		this.arq = this.arquivo.getAbsolutePath();
                 System.out.println(arq);
 		Scanner scanner = new Scanner(arquivo);		

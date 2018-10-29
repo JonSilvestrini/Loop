@@ -1,5 +1,8 @@
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import view.TelaPrincipal;
@@ -42,7 +45,11 @@ public class Main {
 		/* Create and display the form */
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				new TelaPrincipal().setVisible(true);
+				try {
+					new TelaPrincipal().setVisible(true);
+				} catch (IOException ex) {
+					Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+				}
 			}
 		});
 	}
