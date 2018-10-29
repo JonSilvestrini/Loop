@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -24,8 +25,7 @@ public class PainelEdicao {
 	private JTextArea jTextArea1 = new JTextArea();
 	private JScrollPane jScrollPane1 = new JScrollPane();
 	private File arquivo;
-	private BufferedReader lerArq;
-	private FileReader arq;
+	private String arq;
 	
 	public PainelEdicao() {
 	}
@@ -37,8 +37,14 @@ public class PainelEdicao {
 	public File getArquivo() {
 		return this.arquivo;
 	}
+
+    public String getArq() {
+        return arq;
+    }
+        
+        
 	
-	public JScrollPane montarPainel() {
+	public JScrollPane montarPainel() throws IOException {
 		jTextArea1.setBackground(new java.awt.Color(18, 31, 53));
 		jTextArea1.setColumns(20);
 		jTextArea1.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
@@ -51,15 +57,19 @@ public class PainelEdicao {
 		jTextArea1.setName(""); // NOI18N
 		jTextArea1.setLineWrap(true);
 		jScrollPane1.setViewportView(jTextArea1);
+                if (this.arquivo!=null)
+                    loadArquivosPainel();
 		return jScrollPane1;
 	}
 	
 	private void loadArquivosPainel() throws FileNotFoundException, IOException {
-		this.arq = new FileReader(this.arquivo.getPath());
-		this.lerArq = new BufferedReader(this.arq);		
-		while (this.lerArq.readLine() != null) {
-			this.jTextArea1.append(this.lerArq.readLine());
+                this.jTextArea1.setText("");
+		this.arq = this.arquivo.getAbsolutePath();
+                System.out.println(arq);
+		Scanner scanner = new Scanner(arquivo);		
+		while (scanner.hasNext()) {
+			this.jTextArea1.append(scanner.nextLine() + "\n");
 		}
-		this.arq.close();		
+		scanner.close();		
 	}
 }

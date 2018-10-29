@@ -7,6 +7,7 @@ package view;
 
 import File.FileManager;
 import java.awt.Color;
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -29,128 +30,128 @@ import portugoloo.lexico.Converte;
  */
 public class TelaPrincipal extends javax.swing.JFrame {
 
-	/**
-	 * Creates new form TelaPrincipal
-	 */
-	private File pastaProjeto;
-	FileManager fm;
-	List<File> arquivos;
+    /**
+     * Creates new form TelaPrincipal
+     */
+    private File pastaProjeto;
+    FileManager fm;
+    List<File> arquivos;
 
-	private Compilador comp;
+    private Compilador comp;
 
-	public TelaPrincipal() {
-		selecionarPastaProjeto();
-		this.fm = new FileManager(this.pastaProjeto);
-		initComponents();
-		carregarArquivos();
-		comp = new Compilador();
+    public TelaPrincipal() throws IOException {
+        selecionarPastaProjeto();
+        this.fm = new FileManager(this.pastaProjeto);
+        initComponents();
+        carregarArquivos();
+        comp = new Compilador();
 
-		comp.addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent pce) {
-				OutputTextUpdate((String) pce.getNewValue());
-			}
-		});
+        comp.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent pce) {
+                OutputTextUpdate((String) pce.getNewValue());
+            }
+        });
 
-	}
+    }
 
-	public void selecionarPastaProjeto() {
-		JFileChooser fc = new JFileChooser();
-		fc.setCurrentDirectory(new java.io.File("."));
-		fc.setDialogTitle("Selecione a pasta do Projeto");
-		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		fc.setAcceptAllFileFilterUsed(false);
-		fc.showDialog(fc, "Abrir Pasta");
-		this.pastaProjeto = fc.getSelectedFile();
-	}
+    public void selecionarPastaProjeto() {
+        JFileChooser fc = new JFileChooser();
+        fc.setCurrentDirectory(new java.io.File("."));
+        fc.setDialogTitle("Selecione a pasta do Projeto");
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.showDialog(fc, "Abrir Pasta");
+        this.pastaProjeto = fc.getSelectedFile();
+    }
 
-	public void MensagemOutput(String texto) {
-		char canto = '+';
-		char linha = '=';
-		char lateral = '|';
+    public void MensagemOutput(String texto) {
+        char canto = '+';
+        char linha = '=';
+        char lateral = '|';
 
-		String linha1 = "" + canto;
-		for (int i = 0; i < (texto.length() + 2); i++) {
-			linha1 += linha;
-		}
-		linha1 += canto + "\n";
-		String linha2 = lateral + " " + texto + " " + lateral + "\n";
-		OutputTextUpdate(linha1 + linha2 + linha1);
+        String linha1 = "" + canto;
+        for (int i = 0; i < (texto.length() + 2); i++) {
+            linha1 += linha;
+        }
+        linha1 += canto + "\n";
+        String linha2 = lateral + " " + texto + " " + lateral + "\n";
+        OutputTextUpdate(linha1 + linha2 + linha1);
 
-	}
+    }
 
-	public void Compilar() {
+    public void Compilar() {
 
-		ScanFiles scanner = new ScanFiles();
+        ScanFiles scanner = new ScanFiles();
 
-		String path = pastaProjeto.getAbsolutePath().toString();
+        String path = pastaProjeto.getAbsolutePath().toString();
 
-		MensagemOutput("Procurando em pasta: " + path);
+        MensagemOutput("Procurando em pasta: " + path);
 
-		scanner.setPath(path);
-		try {
-			scanner.ScanClasses();
-		} catch (IOException ex) {
-			MensagemOutput("Erro ao encontrar os arquivos .classe");
-			JOptionPane.showMessageDialog(rootPane, "Erro ao encontrar os arquivos .classe\nErro:" + ex.getMessage(), "Deu ruim", 0);
-			return;
-		}
+        scanner.setPath(path);
+        try {
+            scanner.ScanClasses();
+        } catch (IOException ex) {
+            MensagemOutput("Erro ao encontrar os arquivos .classe");
+            JOptionPane.showMessageDialog(rootPane, "Erro ao encontrar os arquivos .classe\nErro:" + ex.getMessage(), "Deu ruim", 0);
+            return;
+        }
 
-		if (scanner.getListaArquivos().isEmpty()) {
-			MensagemOutput("Erro ao encontrar os arquivos .classe");
-			return;
-		}
+        if (scanner.getListaArquivos().isEmpty()) {
+            MensagemOutput("Erro ao encontrar os arquivos .classe");
+            return;
+        }
 
-		List<Arquivo> arquivos = scanner.getListaArquivos();
+        List<Arquivo> arquivos = scanner.getListaArquivos();
 
-		List<Token> tokens = new TokensGenBasico().getTokens();
+        List<Token> tokens = new TokensGenBasico().getTokens();
 
-		Converte conversor = new Converte(tokens);
-		conversor.converter(arquivos);
+        Converte conversor = new Converte(tokens);
+        conversor.converter(arquivos);
 
-		Interprete inter = new Interprete(tokens);
-		inter.interpretar(conversor.getListaInter());
+        Interprete inter = new Interprete(tokens);
+        inter.interpretar(conversor.getListaInter());
 
-		comp.setArquivos(inter.getListaJava());
-		comp.setPath(path);
-		try {
-			MensagemOutput("Compilando os arquivos...");
-			if (comp.CleanCompile()) {
-				MensagemOutput("Compilado com sucesso!");
-			} else {
-				MensagemOutput("Erro ao Compilar");
-			}
+        comp.setArquivos(inter.getListaJava());
+        comp.setPath(path);
+        try {
+            MensagemOutput("Compilando os arquivos...");
+            if (comp.CleanCompile()) {
+                MensagemOutput("Compilado com sucesso!");
+            } else {
+                MensagemOutput("Erro ao Compilar");
+            }
 
-		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(rootPane, "Erro ao compilar o projeto\nerro:" + ex.getMessage(), "deu ruim", 0);
-			MensagemOutput("Erro ao compilar!");
-		}
-	}
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(rootPane, "Erro ao compilar o projeto\nerro:" + ex.getMessage(), "deu ruim", 0);
+            MensagemOutput("Erro ao compilar!");
+        }
+    }
 
-	public void carregarArquivos() {
-		List<File> files = fm.ScanFiles();
-		if (files.isEmpty()) {
-			abasTexto.addTab("Novo Arquivo", new PainelEdicao().montarPainel());
-		} else {
-			for (final File arq : files) {
-				abasTexto.addTab(arq.getName(), new PainelEdicao(arq).montarPainel());
+    public void carregarArquivos() throws IOException {
+        List<File> files = fm.ScanFiles();
+        if (files.isEmpty()) {
+            abasTexto.addTab("Novo Arquivo", new PainelEdicao().montarPainel());
+        } else {
+            for (final File arq : files) {
+                abasTexto.addTab(arq.getName(), new PainelEdicao(arq).montarPainel());
 
-			}
-		}
-	}
+            }
+        }
+    }
 
-	public void OutputTextUpdate(String texto) {
-		txtOutput.setText(txtOutput.getText() + "\n" + texto);
+    public void OutputTextUpdate(String texto) {
+        txtOutput.setText(txtOutput.getText() + "\n" + texto);
 
-		txtOutput.setCaretPosition(txtOutput.getDocument().getLength());
-	}
+        txtOutput.setCaretPosition(txtOutput.getDocument().getLength());
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -504,6 +505,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenuItem1.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
         jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Salvar.png"))); // NOI18N
         jMenuItem1.setText("Salvar");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu3.add(jMenuItem1);
         jMenu3.add(jSeparator3);
 
@@ -649,49 +655,58 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-	    // TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
         private void Executar(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Executar
-		new Thread(new Runnable() {
-			public void run() {
-				Compilar();
-			}
-		}).start();
+            new Thread(new Runnable() {
+                public void run() {
+                    Compilar();
+                }
+            }).start();
 
 
         }//GEN-LAST:event_Executar
 
     private void jMenuItem19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem19ActionPerformed
-	    txtOutput.setText("");
+        txtOutput.setText("");
     }//GEN-LAST:event_jMenuItem19ActionPerformed
 
     private void IniciarPorMenu(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarPorMenu
-	    new Thread(new Runnable() {
-		    public void run() {
-			    Compilar();
-		    }
-	    }).start();
+        new Thread(new Runnable() {
+            public void run() {
+                Compilar();
+            }
+        }).start();
     }//GEN-LAST:event_IniciarPorMenu
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-	    this.dispose();
+        this.dispose();
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
-	    JOptionPane.showMessageDialog(this, "Não tem ninguem");
+        JOptionPane.showMessageDialog(this, "Não tem ninguem");
     }//GEN-LAST:event_btnAbrirActionPerformed
 
     private void MenuAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuAbrirActionPerformed
-	    JOptionPane.showMessageDialog(this, "Não tem ninguem");
+        JOptionPane.showMessageDialog(this, "Não tem ninguem");
     }//GEN-LAST:event_MenuAbrirActionPerformed
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public void salvar(int indice) {
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        for (int i = 0; i < abasTexto.getComponentCount(); i++) {
+            Component painel = abasTexto.getComponent(i);
+            
+        }
+        
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
-	}
+    /**
+     * @param args the command line arguments
+     */
+    public void salvar(int indice) {
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem MenuAbrir;
