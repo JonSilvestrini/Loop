@@ -35,7 +35,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
      */
     private File pastaProjeto;
     FileManager fm;
-    List<File> arquivos;
 
     private Compilador comp;
 
@@ -131,7 +130,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     public void carregarArquivos() throws IOException {
         List<File> files = fm.ScanFiles();
         if (files.isEmpty()) {
-            abasTexto.addTab("Novo Arquivo", new PainelEdicao().montarPainel());
         } else {
             for (final File arq : files) {
                 abasTexto.addTab(arq.getName(), new PainelEdicao(arq).montarPainel());
