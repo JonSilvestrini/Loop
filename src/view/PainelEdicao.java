@@ -23,7 +23,7 @@ import javax.swing.JTextPane;
  */
 public class PainelEdicao {
 	
-	private JTextPane areaTexto = new JTextPane();
+	private JTextArea areaTexto = new JTextArea();
 	private JScrollPane painelScroll = new JScrollPane();
 	private File arquivo;
 	private String arq;

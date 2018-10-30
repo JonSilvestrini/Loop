@@ -12,6 +12,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +36,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
      */
     private File pastaProjeto;
     FileManager fm;
+    List<PainelEdicao> conteudoAbas = new ArrayList<>();
+    PainelEdicao painelGenerico;
 
     private Compilador comp;
 
@@ -130,10 +133,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
     public void carregarArquivos() throws IOException {
         List<File> files = fm.ScanFiles();
         if (files.isEmpty()) {
+            painelGenerico = new PainelEdicao();
+            abasTexto.addTab("Novo Arquivo", painelGenerico.montarPainel());
+            conteudoAbas.add(painelGenerico);
         } else {
             for (final File arq : files) {
-                abasTexto.addTab(arq.getName(), new PainelEdicao(arq).montarPainel());
-
+                painelGenerico = new PainelEdicao(arq);
+                abasTexto.addTab(arq.getName(), painelGenerico.montarPainel());
+                conteudoAbas.add(painelGenerico);
             }
         }
     }
