@@ -24,6 +24,7 @@ import javabeans.Token;
 import javabeans.TokensGenBasico;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import portugoloo.input.ScanFiles;
 import portugoloo.interpretador.*;
 import portugoloo.lexico.Converte;
@@ -34,135 +35,136 @@ import portugoloo.lexico.Converte;
  */
 public class TelaPrincipal extends javax.swing.JFrame {
 
-	/**
-	 * Creates new form TelaPrincipal
-	 */
-	private File pastaProjeto;
-	FileManager fm;
-	List<PainelEdicao> conteudoAbas = new ArrayList<>();
-	PainelEdicao painelGenerico;
+    /**
+     * Creates new form TelaPrincipal
+     */
+    private File pastaProjeto;
+    private FileManager fm;
+    private List<PainelEdicao> conteudoAbas = new ArrayList<>();
+    private PainelEdicao painelGenerico;
+    private JTextArea funcoesTexto = new JTextArea();
 
-	private Compilador comp;
+    private Compilador comp;
 
-	public TelaPrincipal() throws IOException {
-		URL url = this.getClass().getResource("/img/IconeLoop.png");
-		Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url);
-		this.setIconImage(iconeTitulo);
-		selecionarPastaProjeto();
-		this.fm = new FileManager(this.pastaProjeto);
-		initComponents();
-		carregarArquivos();
-		comp = new Compilador();
+    public TelaPrincipal() throws IOException {
+        URL url = this.getClass().getResource("/img/IconeLoop.png");
+        Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url);
+        this.setIconImage(iconeTitulo);
+        selecionarPastaProjeto();
+        this.fm = new FileManager(this.pastaProjeto);
+        initComponents();
+        carregarArquivos();
+        comp = new Compilador();
 
-		comp.addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent pce) {
-				OutputTextUpdate((String) pce.getNewValue());
-			}
-		});
+        comp.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent pce) {
+                OutputTextUpdate((String) pce.getNewValue());
+            }
+        });
 
-	}
+    }
 
-	public void selecionarPastaProjeto() {
-		JFileChooser fc = new JFileChooser();
-		fc.setCurrentDirectory(new java.io.File("."));
-		fc.setDialogTitle("Selecione a pasta do Projeto");
-		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		fc.setAcceptAllFileFilterUsed(false);
-		fc.showDialog(fc, "Abrir Pasta");
-		this.pastaProjeto = fc.getSelectedFile();
-	}
+    public void selecionarPastaProjeto() {
+        JFileChooser fc = new JFileChooser();
+        fc.setCurrentDirectory(new java.io.File("."));
+        fc.setDialogTitle("Selecione a pasta do Projeto");
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.showDialog(fc, "Abrir Pasta");
+        this.pastaProjeto = fc.getSelectedFile();
+    }
 
-	public void MensagemOutput(String texto) {
-		char canto = '+';
-		char linha = '=';
-		char lateral = '|';
+    public void MensagemOutput(String texto) {
+        char canto = '+';
+        char linha = '=';
+        char lateral = '|';
 
-		String linha1 = "" + canto;
-		for (int i = 0; i < (texto.length() + 2); i++) {
-			linha1 += linha;
-		}
-		linha1 += canto + "\n";
-		String linha2 = lateral + " " + texto + " " + lateral + "\n";
-		OutputTextUpdate(linha1 + linha2 + linha1);
+        String linha1 = "" + canto;
+        for (int i = 0; i < (texto.length() + 2); i++) {
+            linha1 += linha;
+        }
+        linha1 += canto + "\n";
+        String linha2 = lateral + " " + texto + " " + lateral + "\n";
+        OutputTextUpdate(linha1 + linha2 + linha1);
 
-	}
+    }
 
-	public void Compilar() {
+    public void Compilar() {
 
-		ScanFiles scanner = new ScanFiles();
+        ScanFiles scanner = new ScanFiles();
 
-		String path = pastaProjeto.getAbsolutePath().toString();
+        String path = pastaProjeto.getAbsolutePath().toString();
 
-		MensagemOutput("Procurando em pasta: " + path);
+        MensagemOutput("Procurando em pasta: " + path);
 
-		scanner.setPath(path);
-		try {
-			scanner.ScanClasses();
-		} catch (IOException ex) {
-			MensagemOutput("Erro ao encontrar os arquivos .classe");
-			JOptionPane.showMessageDialog(rootPane, "Erro ao encontrar os arquivos .classe\nErro:" + ex.getMessage(), "Deu ruim", 0);
-			return;
-		}
+        scanner.setPath(path);
+        try {
+            scanner.ScanClasses();
+        } catch (IOException ex) {
+            MensagemOutput("Erro ao encontrar os arquivos .classe");
+            JOptionPane.showMessageDialog(rootPane, "Erro ao encontrar os arquivos .classe\nErro:" + ex.getMessage(), "Deu ruim", 0);
+            return;
+        }
 
-		if (scanner.getListaArquivos().isEmpty()) {
-			MensagemOutput("Erro ao encontrar os arquivos .classe");
-			return;
-		}
+        if (scanner.getListaArquivos().isEmpty()) {
+            MensagemOutput("Erro ao encontrar os arquivos .classe");
+            return;
+        }
 
-		List<Arquivo> arquivos = scanner.getListaArquivos();
+        List<Arquivo> arquivos = scanner.getListaArquivos();
 
-		List<Token> tokens = new TokensGenBasico().getTokens();
+        List<Token> tokens = new TokensGenBasico().getTokens();
 
-		Converte conversor = new Converte(tokens);
-		conversor.converter(arquivos);
+        Converte conversor = new Converte(tokens);
+        conversor.converter(arquivos);
 
-		Interprete inter = new Interprete(tokens);
-		inter.interpretar(conversor.getListaInter());
+        Interprete inter = new Interprete(tokens);
+        inter.interpretar(conversor.getListaInter());
 
-		comp.setArquivos(inter.getListaJava());
-		comp.setPath(path);
-		try {
-			MensagemOutput("Compilando os arquivos...");
-			if (comp.CleanCompile()) {
-				MensagemOutput("Compilado com sucesso!");
-			} else {
-				MensagemOutput("Erro ao Compilar");
-			}
+        comp.setArquivos(inter.getListaJava());
+        comp.setPath(path);
+        try {
+            MensagemOutput("Compilando os arquivos...");
+            if (comp.CleanCompile()) {
+                MensagemOutput("Compilado com sucesso!");
+            } else {
+                MensagemOutput("Erro ao Compilar");
+            }
 
-		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(rootPane, "Erro ao compilar o projeto\nerro:" + ex.getMessage(), "deu ruim", 0);
-			MensagemOutput("Erro ao compilar!");
-		}
-	}
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(rootPane, "Erro ao compilar o projeto\nerro:" + ex.getMessage(), "deu ruim", 0);
+            MensagemOutput("Erro ao compilar!");
+        }
+    }
 
-	public void carregarArquivos() throws IOException {
-		List<File> files = fm.ScanFiles();
-		if (files.isEmpty()) {
-			painelGenerico = new PainelEdicao();
-			abasTexto.addTab("Novo Arquivo", painelGenerico.montarPainel());
-			conteudoAbas.add(painelGenerico);
-		} else {
-			for (final File arq : files) {
-				painelGenerico = new PainelEdicao(arq);
-				abasTexto.addTab(arq.getName(), painelGenerico.montarPainel());
-				conteudoAbas.add(painelGenerico);
-			}
-		}
-	}
+    public void carregarArquivos() throws IOException {
+        List<File> files = fm.ScanFiles();
+        if (files.isEmpty()) {
+            painelGenerico = new PainelEdicao();
+            abasTexto.addTab("Novo Arquivo", painelGenerico.montarPainel());
+            conteudoAbas.add(painelGenerico);
+        } else {
+            for (final File arq : files) {
+                painelGenerico = new PainelEdicao(arq);
+                abasTexto.addTab(arq.getName(), painelGenerico.montarPainel());
+                conteudoAbas.add(painelGenerico);
+            }
+        }
+    }
 
-	public void OutputTextUpdate(String texto) {
-		txtOutput.setText(txtOutput.getText() + "\n" + texto);
+    public void OutputTextUpdate(String texto) {
+        txtOutput.setText(txtOutput.getText() + "\n" + texto);
 
-		txtOutput.setCaretPosition(txtOutput.getDocument().getLength());
-	}
+        txtOutput.setCaretPosition(txtOutput.getDocument().getLength());
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -177,9 +179,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        btnNovoArquivo = new javax.swing.JButton();
         btnAbrir = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnSalvar = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
@@ -199,21 +201,22 @@ public class TelaPrincipal extends javax.swing.JFrame {
         txtOutput = new javax.swing.JTextPane();
         abasTexto = new javax.swing.JTabbedPane();
         jMenuBar2 = new javax.swing.JMenuBar();
-        jMenu3 = new javax.swing.JMenu();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        menuArquivo = new javax.swing.JMenu();
+        itmNovoArquivo = new javax.swing.JMenuItem();
         MenuAbrir = new javax.swing.JMenuItem();
         jMenuSalvar = new javax.swing.JMenuItem();
+        itmSalvarTudo = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         jMenuItem4 = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         jMenuSair = new javax.swing.JMenuItem();
-        jMenu4 = new javax.swing.JMenu();
-        jMenuItem6 = new javax.swing.JMenuItem();
+        menuEditar = new javax.swing.JMenu();
+        itmDesfazer = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem8 = new javax.swing.JMenuItem();
-        jMenuItem9 = new javax.swing.JMenuItem();
-        jMenuItem10 = new javax.swing.JMenuItem();
+        itmCortar = new javax.swing.JMenuItem();
+        itmCopiar = new javax.swing.JMenuItem();
+        itmColar = new javax.swing.JMenuItem();
         jMenuItem11 = new javax.swing.JMenuItem();
         jMenuItem12 = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
@@ -284,11 +287,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(51, 51, 51));
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton1.setBackground(new java.awt.Color(51, 51, 51));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/novo_1.png"))); // NOI18N
-        jButton1.setBorder(null);
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jButton1.setOpaque(false);
+        btnNovoArquivo.setBackground(new java.awt.Color(51, 51, 51));
+        btnNovoArquivo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/novo_1.png"))); // NOI18N
+        btnNovoArquivo.setBorder(null);
+        btnNovoArquivo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnNovoArquivo.setOpaque(false);
+        btnNovoArquivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovoArquivoActionPerformed(evt);
+            }
+        });
 
         btnAbrir.setBackground(new java.awt.Color(51, 51, 51));
         btnAbrir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/abrir_1.png"))); // NOI18N
@@ -300,10 +308,15 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setBackground(new java.awt.Color(51, 51, 51));
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/salvar_1.png"))); // NOI18N
-        jButton3.setBorder(null);
-        jButton3.setOpaque(false);
+        btnSalvar.setBackground(new java.awt.Color(51, 51, 51));
+        btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/salvar_1.png"))); // NOI18N
+        btnSalvar.setBorder(null);
+        btnSalvar.setOpaque(false);
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
 
         jButton4.setBackground(new java.awt.Color(51, 51, 51));
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/imprimir_1.png"))); // NOI18N
@@ -374,11 +387,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnNovoArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -411,9 +424,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator6)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnNovoArquivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAbrir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSalvar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -492,14 +505,19 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenuBar2.setForeground(new java.awt.Color(255, 255, 255));
         jMenuBar2.setMinimumSize(new java.awt.Dimension(200, 200));
 
-        jMenu3.setText("Arquivo");
-        jMenu3.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        menuArquivo.setText("Arquivo");
+        menuArquivo.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem2.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
-        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Novo.png"))); // NOI18N
-        jMenuItem2.setLabel("Novo");
-        jMenu3.add(jMenuItem2);
+        itmNovoArquivo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        itmNovoArquivo.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        itmNovoArquivo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Novo.png"))); // NOI18N
+        itmNovoArquivo.setLabel("Novo");
+        itmNovoArquivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itmNovoArquivoActionPerformed(evt);
+            }
+        });
+        menuArquivo.add(itmNovoArquivo);
 
         MenuAbrir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         MenuAbrir.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
@@ -510,7 +528,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 MenuAbrirActionPerformed(evt);
             }
         });
-        jMenu3.add(MenuAbrir);
+        menuArquivo.add(MenuAbrir);
 
         jMenuSalvar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuSalvar.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
@@ -521,15 +539,25 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 jMenuSalvarActionPerformed(evt);
             }
         });
-        jMenu3.add(jMenuSalvar);
-        jMenu3.add(jSeparator3);
+        menuArquivo.add(jMenuSalvar);
+
+        itmSalvarTudo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        itmSalvarTudo.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        itmSalvarTudo.setText("Salvar Tudo");
+        itmSalvarTudo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itmSalvarTudoActionPerformed(evt);
+            }
+        });
+        menuArquivo.add(itmSalvarTudo);
+        menuArquivo.add(jSeparator3);
 
         jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem4.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
         jMenuItem4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Imprimir.png"))); // NOI18N
         jMenuItem4.setText("Imprimir");
-        jMenu3.add(jMenuItem4);
-        jMenu3.add(jSeparator4);
+        menuArquivo.add(jMenuItem4);
+        menuArquivo.add(jSeparator4);
 
         jMenuSair.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         jMenuSair.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
@@ -540,64 +568,84 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 jMenuSairActionPerformed(evt);
             }
         });
-        jMenu3.add(jMenuSair);
+        menuArquivo.add(jMenuSair);
 
-        jMenuBar2.add(jMenu3);
+        jMenuBar2.add(menuArquivo);
 
-        jMenu4.setText("Editar");
-        jMenu4.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        menuEditar.setText("Editar");
+        menuEditar.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
 
-        jMenuItem6.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem6.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
-        jMenuItem6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Desfazer.png"))); // NOI18N
-        jMenuItem6.setText("Desfazer");
-        jMenu4.add(jMenuItem6);
+        itmDesfazer.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
+        itmDesfazer.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        itmDesfazer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Desfazer.png"))); // NOI18N
+        itmDesfazer.setText("Desfazer");
+        itmDesfazer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itmDesfazerActionPerformed(evt);
+            }
+        });
+        menuEditar.add(itmDesfazer);
 
         jMenuItem7.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem7.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
         jMenuItem7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Refazer.png"))); // NOI18N
         jMenuItem7.setText("Refazer");
-        jMenu4.add(jMenuItem7);
-        jMenu4.add(jSeparator1);
+        menuEditar.add(jMenuItem7);
+        menuEditar.add(jSeparator1);
 
-        jMenuItem8.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem8.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
-        jMenuItem8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Cortar.png"))); // NOI18N
-        jMenuItem8.setText("Cortar");
-        jMenu4.add(jMenuItem8);
+        itmCortar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
+        itmCortar.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        itmCortar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Cortar.png"))); // NOI18N
+        itmCortar.setText("Cortar");
+        itmCortar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itmCortarActionPerformed(evt);
+            }
+        });
+        menuEditar.add(itmCortar);
 
-        jMenuItem9.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem9.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
-        jMenuItem9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Copiar.png"))); // NOI18N
-        jMenuItem9.setText("Copiar");
-        jMenu4.add(jMenuItem9);
+        itmCopiar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        itmCopiar.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        itmCopiar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Copiar.png"))); // NOI18N
+        itmCopiar.setText("Copiar");
+        itmCopiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itmCopiarActionPerformed(evt);
+            }
+        });
+        menuEditar.add(itmCopiar);
 
-        jMenuItem10.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem10.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
-        jMenuItem10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Colar.png"))); // NOI18N
-        jMenuItem10.setText("Colar");
-        jMenu4.add(jMenuItem10);
+        itmColar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+        itmColar.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        itmColar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Colar.png"))); // NOI18N
+        itmColar.setText("Colar");
+        itmColar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itmColarActionPerformed(evt);
+            }
+        });
+        menuEditar.add(itmColar);
 
         jMenuItem11.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
         jMenuItem11.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
         jMenuItem11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Deletar.png"))); // NOI18N
         jMenuItem11.setText("Delete");
         jMenuItem11.setToolTipText("");
-        jMenu4.add(jMenuItem11);
+        menuEditar.add(jMenuItem11);
 
         jMenuItem12.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem12.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
         jMenuItem12.setText("Selecionar Tudo");
-        jMenu4.add(jMenuItem12);
-        jMenu4.add(jSeparator2);
+        menuEditar.add(jMenuItem12);
+        menuEditar.add(jSeparator2);
 
         jMenuItem13.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem13.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
         jMenuItem13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Procurar.png"))); // NOI18N
         jMenuItem13.setText("Procurar e Substituir");
-        jMenu4.add(jMenuItem13);
+        menuEditar.add(jMenuItem13);
 
-        jMenuBar2.add(jMenu4);
+        jMenuBar2.add(menuEditar);
 
         jMenu5.setText("Compilar");
         jMenu5.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
@@ -661,67 +709,147 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
         private void Executar(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Executar
-		new Thread(new Runnable() {
-			public void run() {
-				Compilar();
-			}
-		}).start();
+            new Thread(new Runnable() {
+                public void run() {
+                    Compilar();
+                }
+            }).start();
 
 
         }//GEN-LAST:event_Executar
 
     private void jMenuItemLimparOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLimparOutputActionPerformed
-	    txtOutput.setText("");
+        txtOutput.setText("");
     }//GEN-LAST:event_jMenuItemLimparOutputActionPerformed
 
     private void IniciarPorMenu(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarPorMenu
-	    new Thread(new Runnable() {
-		    public void run() {
-			    Compilar();
-		    }
-	    }).start();
+        new Thread(new Runnable() {
+            public void run() {
+                Compilar();
+            }
+        }).start();
     }//GEN-LAST:event_IniciarPorMenu
 
     private void jMenuSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuSairActionPerformed
-	    this.dispose();
+        this.dispose();
     }//GEN-LAST:event_jMenuSairActionPerformed
 
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
-	    JOptionPane.showMessageDialog(this, "Não tem ninguem");
+        JOptionPane.showMessageDialog(this, "Não tem ninguem");
     }//GEN-LAST:event_btnAbrirActionPerformed
 
     private void MenuAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuAbrirActionPerformed
-	    JOptionPane.showMessageDialog(this, "Não tem ninguem");
+        JOptionPane.showMessageDialog(this, "Não tem ninguem");
     }//GEN-LAST:event_MenuAbrirActionPerformed
 
     private void jMenuSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuSalvarActionPerformed
-	    // TODO add your handling code here:
-	    for (int i = 0; i < abasTexto.getComponentCount(); i++) {
-		    Component painel = abasTexto.getComponent(i);
-
-	    }
-
+        // TODO add your handling code here:
+        salvar();
     }//GEN-LAST:event_jMenuSalvarActionPerformed
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public void salvar(int indice) {
+    private void itmSalvarTudoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itmSalvarTudoActionPerformed
+        // TODO add your handling code here:
+        for (int i = 0; i < abasTexto.getComponentCount(); i++) {
+            painelGenerico = new PainelEdicao();
+            painelGenerico = conteudoAbas.get(i);
+            try {
+                painelGenerico.saveFile();
+            } catch (IOException ex) {
+                Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_itmSalvarTudoActionPerformed
 
-	}
+    private void itmCopiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itmCopiarActionPerformed
+        // TODO add your handling code here:
+        funcoesTexto.copy();
+    }//GEN-LAST:event_itmCopiarActionPerformed
+
+    private void itmCortarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itmCortarActionPerformed
+        // TODO add your handling code here:
+        funcoesTexto.cut();
+    }//GEN-LAST:event_itmCortarActionPerformed
+
+    private void itmColarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itmColarActionPerformed
+        // TODO add your handling code here:
+        funcoesTexto.paste();
+    }//GEN-LAST:event_itmColarActionPerformed
+
+    private void itmDesfazerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itmDesfazerActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_itmDesfazerActionPerformed
+
+    private void btnNovoArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoArquivoActionPerformed
+        try {
+            // TODO add your handling code here:
+            novoArquivo();
+        } catch (IOException ex) {
+            Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnNovoArquivoActionPerformed
+
+    private void itmNovoArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itmNovoArquivoActionPerformed
+        try {
+            // TODO add your handling code here:
+            novoArquivo();
+        } catch (IOException ex) {
+            Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_itmNovoArquivoActionPerformed
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        // TODO add your handling code here:
+        salvar();
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public void salvar() {
+        for (int i = 0; i < abasTexto.getComponentCount(); i++) {
+            if (abasTexto.getSelectedIndex() == i) {
+                painelGenerico = new PainelEdicao();
+                painelGenerico = conteudoAbas.get(i);
+                if (painelGenerico.getArquivo() == null) {
+                    
+                } else {
+                    try {
+                        painelGenerico.saveFile();
+                    } catch (IOException ex) {
+                        Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    public void novoArquivo() throws IOException {
+        painelGenerico = new PainelEdicao();
+        abasTexto.addTab("Novo Arquivo", painelGenerico.montarPainel());
+        conteudoAbas.add(painelGenerico);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem MenuAbrir;
     private javax.swing.JTabbedPane abasTexto;
     private javax.swing.JButton bntExecutar;
     private javax.swing.JButton btnAbrir;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnNovoArquivo;
+    private javax.swing.JButton btnSalvar;
+    private javax.swing.JMenuItem itmColar;
+    private javax.swing.JMenuItem itmCopiar;
+    private javax.swing.JMenuItem itmCortar;
+    private javax.swing.JMenuItem itmDesfazer;
+    private javax.swing.JMenuItem itmNovoArquivo;
+    private javax.swing.JMenuItem itmSalvarTudo;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton15;
     private javax.swing.JButton jButton16;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
@@ -731,13 +859,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
     private javax.swing.JMenu jMenu6;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuBar jMenuBar2;
-    private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
@@ -745,12 +870,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem16;
     private javax.swing.JMenuItem jMenuItem17;
     private javax.swing.JMenuItem jMenuItem18;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
-    private javax.swing.JMenuItem jMenuItem8;
-    private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JMenuItem jMenuItemIniciar;
     private javax.swing.JMenuItem jMenuItemLimparOutput;
     private javax.swing.JMenuItem jMenuSair;
@@ -769,6 +890,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator7;
     private javax.swing.JSeparator jSeparator8;
     private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JMenu menuArquivo;
+    private javax.swing.JMenu menuEditar;
     private javax.swing.JTextPane txtOutput;
     // End of variables declaration//GEN-END:variables
 }
