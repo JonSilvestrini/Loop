@@ -743,17 +743,22 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_MenuAbrirActionPerformed
 
     private void jMenuSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuSalvarActionPerformed
-        // TODO add your handling code here:
-        salvar();
+        for (int i = 0; i < abasTexto.getComponentCount(); i++) {
+            if (abasTexto.getSelectedIndex() == i) {
+                try {
+                    salvar(i);
+                } catch (IOException ex) {
+                    Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }//GEN-LAST:event_jMenuSalvarActionPerformed
 
     private void itmSalvarTudoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itmSalvarTudoActionPerformed
         // TODO add your handling code here:
         for (int i = 0; i < abasTexto.getComponentCount(); i++) {
-            painelGenerico = new PainelEdicao();
-            painelGenerico = conteudoAbas.get(i);
             try {
-                painelGenerico.saveFile();
+                salvar(i);
             } catch (IOException ex) {
                 Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -799,20 +804,35 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_itmNovoArquivoActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        // TODO add your handling code here:
-        salvar();
+        for (int i = 0; i < abasTexto.getComponentCount(); i++) {
+            if (abasTexto.getSelectedIndex() == i) {
+                try {
+                    salvar(i);
+                } catch (IOException ex) {
+                    Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public void salvar() {
-        for (int i = 0; i < abasTexto.getComponentCount(); i++) {
-            if (abasTexto.getSelectedIndex() == i) {
+    public void salvar(int i) throws IOException {
                 painelGenerico = new PainelEdicao();
                 painelGenerico = conteudoAbas.get(i);
                 if (painelGenerico.getArquivo() == null) {
-                    
+                    abasTexto.setSelectedIndex(i);
+                    JFileChooser fc = new JFileChooser();
+                    fc.setCurrentDirectory(pastaProjeto);
+                    fc.showSaveDialog(jPanel1);
+                    File arq = fc.getSelectedFile();
+                    arq.createNewFile();
+                    painelGenerico.setArquivo(arq);
+                    painelGenerico.saveFile();
+                    abasTexto.remove(abasTexto.getSelectedIndex());
+                    abasTexto.add(painelGenerico.montarPainel());
+                    abasTexto.setTitleAt(abasTexto.getSelectedIndex(), painelGenerico.getArq());
                 } else {
                     try {
                         painelGenerico.saveFile();
@@ -820,9 +840,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                         Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            }
 
-        }
 
     }
 

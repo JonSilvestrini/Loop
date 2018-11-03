@@ -37,12 +37,16 @@ public class PainelEdicao {
     public File getArquivo() {
         return this.arquivo;
     }
+    
+    public void setArquivo(File arq){
+        this.arquivo = arq;
+        this.arq = arquivo.getName();
+    }
 
     public String getArq() {
         return arq;
     }
     
-   
 
     public JScrollPane montarPainel() throws IOException {
         areaTexto.setBackground(new java.awt.Color(18, 31, 53));
