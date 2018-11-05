@@ -92,6 +92,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     public void Compilar() {
 
+        for (int i = 0; i < abasTexto.getComponentCount(); i++) {
+            try {
+                salvar(i);
+            } catch (IOException ex) {
+                Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
         ScanFiles scanner = new ScanFiles();
 
         String path = pastaProjeto.getAbsolutePath().toString();
@@ -139,6 +147,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }
 
     public void carregarArquivos() throws IOException {
+        System.out.println(abasTexto.getComponentCount());
+        if (abasTexto.getComponentCount() != 0) {
+            for (int i = 1; i <= abasTexto.getComponentCount(); i++) {
+                abasTexto.removeTabAt(i);
+            }
+        }
+        conteudoAbas.clear();
         List<File> files = fm.ScanFiles();
         if (files.isEmpty()) {
             painelGenerico = new PainelEdicao();
@@ -206,6 +221,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         MenuAbrir = new javax.swing.JMenuItem();
         jMenuSalvar = new javax.swing.JMenuItem();
         itmSalvarTudo = new javax.swing.JMenuItem();
+        itmRecarregarProj = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         jMenuItem4 = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
@@ -550,6 +566,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
         menuArquivo.add(itmSalvarTudo);
+
+        itmRecarregarProj.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.SHIFT_MASK));
+        itmRecarregarProj.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
+        itmRecarregarProj.setText("Recarregar Projeto");
+        itmRecarregarProj.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itmRecarregarProjActionPerformed(evt);
+            }
+        });
+        menuArquivo.add(itmRecarregarProj);
         menuArquivo.add(jSeparator3);
 
         jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
@@ -815,32 +841,40 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
+    private void itmRecarregarProjActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itmRecarregarProjActionPerformed
+        try {
+            // TODO add your handling code here:
+            carregarArquivos();
+        } catch (IOException ex) {
+            Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_itmRecarregarProjActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public void salvar(int i) throws IOException {
-                painelGenerico = new PainelEdicao();
-                painelGenerico = conteudoAbas.get(i);
-                if (painelGenerico.getArquivo() == null) {
-                    abasTexto.setSelectedIndex(i);
-                    JFileChooser fc = new JFileChooser();
-                    fc.setCurrentDirectory(pastaProjeto);
-                    fc.showSaveDialog(jPanel1);
-                    File arq = fc.getSelectedFile();
-                    arq.createNewFile();
-                    painelGenerico.setArquivo(arq);
-                    painelGenerico.saveFile();
-                    abasTexto.remove(abasTexto.getSelectedIndex());
-                    abasTexto.add(painelGenerico.montarPainel());
-                    abasTexto.setTitleAt(abasTexto.getSelectedIndex(), painelGenerico.getArq());
-                } else {
-                    try {
-                        painelGenerico.saveFile();
-                    } catch (IOException ex) {
-                        Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-
+        painelGenerico = new PainelEdicao();
+        painelGenerico = conteudoAbas.get(i);
+        if (painelGenerico.getArquivo() == null) {
+            abasTexto.setSelectedIndex(i);
+            JFileChooser fc = new JFileChooser();
+            fc.setCurrentDirectory(pastaProjeto);
+            fc.showSaveDialog(jPanel1);
+            File arq = fc.getSelectedFile();
+            arq.createNewFile();
+            painelGenerico.setArquivo(arq);
+            painelGenerico.saveFile();
+            abasTexto.remove(abasTexto.getSelectedIndex());
+            abasTexto.add(painelGenerico.montarPainel());
+            abasTexto.setTitleAt(abasTexto.getSelectedIndex(), painelGenerico.getArq());
+        } else {
+            try {
+                painelGenerico.saveFile();
+            } catch (IOException ex) {
+                Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
 
     }
 
@@ -862,6 +896,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem itmCortar;
     private javax.swing.JMenuItem itmDesfazer;
     private javax.swing.JMenuItem itmNovoArquivo;
+    private javax.swing.JMenuItem itmRecarregarProj;
     private javax.swing.JMenuItem itmSalvarTudo;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton13;
