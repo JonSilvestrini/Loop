@@ -28,6 +28,9 @@ import javax.swing.JTextArea;
 import portugoloo.input.ScanFiles;
 import portugoloo.interpretador.*;
 import portugoloo.lexico.Converte;
+import Output.ConsolePane;
+import java.awt.Dimension;
+import java.awt.LayoutManager;
 
 /**
  *
@@ -43,6 +46,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private List<PainelEdicao> conteudoAbas = new ArrayList<>();
     private PainelEdicao painelGenerico;
     private JTextArea funcoesTexto = new JTextArea();
+	private ConsolePane consolePane = new ConsolePane();
+	private Arquivo arquivoMain;
 
     private Compilador comp;
 
@@ -53,6 +58,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         selecionarPastaProjeto();
         this.fm = new FileManager(this.pastaProjeto);
         initComponents();
+		CarregarOutput();
+		this.OutputInternalFrame.getContentPane().add(consolePane);
+		this.OutputInternalFrame.setPreferredSize(new Dimension(200,200));
+		this.OutputInternalFrame.setSize(this.OutputInternalFrame.getPreferredSize());
+		this.OutputInternalFrame.setVisible(true);
         carregarArquivos();
         comp = new Compilador();
 
@@ -63,8 +73,23 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
-    }
+		
 
+
+    }
+   	public void CarregarOutput() {
+		javax.swing.GroupLayout OutputInternalFrameLayout = new javax.swing.GroupLayout(OutputInternalFrame.getContentPane());
+				OutputInternalFrame.getContentPane().setLayout(OutputInternalFrameLayout);
+        OutputInternalFrameLayout.setHorizontalGroup(
+            OutputInternalFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(consolePane)
+        );
+        OutputInternalFrameLayout.setVerticalGroup(
+            OutputInternalFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(consolePane, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+        );
+			
+	}
     public void selecionarPastaProjeto() {
         JFileChooser fc = new JFileChooser();
         fc.setCurrentDirectory(new java.io.File("."));
@@ -124,18 +149,29 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         List<Token> tokens = new TokensGenBasico().getTokens();
 
+
+
+
         Converte conversor = new Converte(tokens);
         conversor.converter(arquivos);
 
         Interprete inter = new Interprete(tokens);
         inter.interpretar(conversor.getListaInter());
 
+		for (final Arquivo arq : inter.getListaJava()) {
+			if (arq.isMain()) {
+				arquivoMain = arq;
+			}
+		}
+
+		
         comp.setArquivos(inter.getListaJava());
         comp.setPath(path);
         try {
             MensagemOutput("Compilando os arquivos...");
             if (comp.CleanCompile()) {
                 MensagemOutput("Compilado com sucesso!");
+				consolePane.executar("java -classpath " + path+"/output/"+" " + arquivoMain.getNomeArq() );
             } else {
                 MensagemOutput("Erro ao Compilar");
             }
@@ -169,9 +205,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }
 
     public void OutputTextUpdate(String texto) {
-        txtOutput.setText(txtOutput.getText() + "\n" + texto);
 
-        txtOutput.setCaretPosition(txtOutput.getDocument().getLength());
+//        txtOutput.setCaretPosition(txtOutput.getDocument().getLength());
+		consolePane.appendText(texto+"\n");
     }
 
     /**
@@ -211,9 +247,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jSeparator8 = new javax.swing.JSeparator();
         jSeparator9 = new javax.swing.JSeparator();
         jSeparator5 = new javax.swing.JSeparator();
-        jInternalFrame1 = new javax.swing.JInternalFrame();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtOutput = new javax.swing.JTextPane();
+        OutputInternalFrame = new javax.swing.JInternalFrame();
         abasTexto = new javax.swing.JTabbedPane();
         jMenuBar2 = new javax.swing.JMenuBar();
         menuArquivo = new javax.swing.JMenu();
@@ -377,6 +411,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jButton14.setBorder(null);
         jButton14.setBorderPainted(false);
         jButton14.setOpaque(false);
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton14ActionPerformed(evt);
+            }
+        });
 
         jButton15.setBackground(new java.awt.Color(51, 51, 51));
         jButton15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/recomeçar_1.png"))); // NOI18N
@@ -459,25 +498,19 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jSeparator5.setCursor(new java.awt.Cursor(java.awt.Cursor.N_RESIZE_CURSOR));
 
-        jInternalFrame1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jInternalFrame1.setTitle("Output");
-        jInternalFrame1.setVisible(true);
+        OutputInternalFrame.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        OutputInternalFrame.setTitle("Output");
+        OutputInternalFrame.setVisible(true);
 
-        txtOutput.setEditable(false);
-        txtOutput.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
-        txtOutput.setToolTipText("Output da programação ");
-        txtOutput.setComponentPopupMenu(jPopupMenuOutput);
-        jScrollPane1.setViewportView(txtOutput);
-
-        javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
-        jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
-        jInternalFrame1Layout.setHorizontalGroup(
-            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
+        javax.swing.GroupLayout OutputInternalFrameLayout = new javax.swing.GroupLayout(OutputInternalFrame.getContentPane());
+        OutputInternalFrame.getContentPane().setLayout(OutputInternalFrameLayout);
+        OutputInternalFrameLayout.setHorizontalGroup(
+            OutputInternalFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 905, Short.MAX_VALUE)
         );
-        jInternalFrame1Layout.setVerticalGroup(
-            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+        OutputInternalFrameLayout.setVerticalGroup(
+            OutputInternalFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 197, Short.MAX_VALUE)
         );
 
         abasTexto.setMinimumSize(new java.awt.Dimension(200, 200));
@@ -491,7 +524,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jInternalFrame1)
+                    .addComponent(OutputInternalFrame)
                     .addComponent(abasTexto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSeparator5, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
@@ -509,7 +542,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jInternalFrame1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(OutputInternalFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -741,11 +774,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 }
             }).start();
 
+			String path = pastaProjeto.getAbsolutePath().toString();
 
         }//GEN-LAST:event_Executar
 
     private void jMenuItemLimparOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLimparOutputActionPerformed
-        txtOutput.setText("");
+//        txtOutput.setText("");
+		consolePane.clearText();
     }//GEN-LAST:event_jMenuItemLimparOutputActionPerformed
 
     private void IniciarPorMenu(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarPorMenu
@@ -850,6 +885,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_itmRecarregarProjActionPerformed
 
+    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+		MensagemOutput("executando nslookup");
+		consolePane.executar("nslookup");
+    }//GEN-LAST:event_jButton14ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -886,6 +926,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem MenuAbrir;
+    private javax.swing.JInternalFrame OutputInternalFrame;
     private javax.swing.JTabbedPane abasTexto;
     private javax.swing.JButton bntExecutar;
     private javax.swing.JButton btnAbrir;
@@ -909,7 +950,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
-    private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu5;
@@ -933,7 +973,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPopupMenu jPopupMenuOutput;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
@@ -945,6 +984,5 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator9;
     private javax.swing.JMenu menuArquivo;
     private javax.swing.JMenu menuEditar;
-    private javax.swing.JTextPane txtOutput;
     // End of variables declaration//GEN-END:variables
 }
