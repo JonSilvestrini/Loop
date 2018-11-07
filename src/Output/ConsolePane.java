@@ -5,6 +5,7 @@
  */
 package Output;
 
+import Formatação.CaixaDeTexto;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class ConsolePane extends JPanel implements CommandListener, Terminal {
 		cmd = new Command(this);
 
 		setLayout(new BorderLayout());
-		textArea = new JTextArea(20, 30);
+		textArea = new JTextArea(5, 5);
 		textArea.setFont(new java.awt.Font("Monospaced", 0, 11));
 		((AbstractDocument) textArea.getDocument()).setDocumentFilter(new ProtectedDocumentFilter(this));
 		add(new JScrollPane(textArea));
@@ -90,9 +91,9 @@ public class ConsolePane extends JPanel implements CommandListener, Terminal {
 		} catch (InterruptedException ex) {
 		}
 		if (result == 0) {
-			appendText("\nTermino bem sucedido!\n");
+			appendText(CaixaDeTexto.Gerar("Termino bem sucedido!"));
 		}else {
-			appendText("\nPrograma terminou com erros\n");
+			appendText(CaixaDeTexto.Gerar("Programa terminou com erros"));
 		}
 	}
 

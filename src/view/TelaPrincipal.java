@@ -6,6 +6,7 @@
 package view;
 
 import File.FileManager;
+import Formatação.CaixaDeTexto;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
@@ -100,21 +101,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         this.pastaProjeto = fc.getSelectedFile();
     }
 
-    public void MensagemOutput(String texto) {
-        char canto = '+';
-        char linha = '=';
-        char lateral = '|';
-
-        String linha1 = "" + canto;
-        for (int i = 0; i < (texto.length() + 2); i++) {
-            linha1 += linha;
-        }
-        linha1 += canto + "\n";
-        String linha2 = lateral + " " + texto + " " + lateral + "\n";
-        OutputTextUpdate(linha1 + linha2 + linha1);
-
-    }
-
     public void Compilar() {
 
         for (int i = 0; i < abasTexto.getComponentCount(); i++) {
@@ -129,19 +115,19 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         String path = pastaProjeto.getAbsolutePath().toString();
 
-        MensagemOutput("Procurando em pasta: " + path);
+        OutputTextUpdate(CaixaDeTexto.Gerar("Procurando em pasta: " + path));
 
         scanner.setPath(path);
         try {
             scanner.ScanClasses();
         } catch (IOException ex) {
-            MensagemOutput("Erro ao encontrar os arquivos .classe");
+            OutputTextUpdate(CaixaDeTexto.Gerar("Erro ao encontrar os arquivos .classe"));
             JOptionPane.showMessageDialog(rootPane, "Erro ao encontrar os arquivos .classe\nErro:" + ex.getMessage(), "Deu ruim", 0);
             return;
         }
 
         if (scanner.getListaArquivos().isEmpty()) {
-            MensagemOutput("Erro ao encontrar os arquivos .classe");
+            OutputTextUpdate(CaixaDeTexto.Gerar("Erro ao encontrar os arquivos .classe"));
             return;
         }
 
@@ -168,17 +154,17 @@ public class TelaPrincipal extends javax.swing.JFrame {
         comp.setArquivos(inter.getListaJava());
         comp.setPath(path);
         try {
-            MensagemOutput("Compilando os arquivos...");
+            OutputTextUpdate(CaixaDeTexto.Gerar("Compilando os arquivos..."));
             if (comp.CleanCompile()) {
-                MensagemOutput("Compilado com sucesso!");
+                OutputTextUpdate(CaixaDeTexto.Gerar("Compilado com sucesso!"));
 				consolePane.executar("java -classpath " + path+"/output/"+" " + arquivoMain.getNomeArq() );
             } else {
-                MensagemOutput("Erro ao Compilar");
+                OutputTextUpdate(CaixaDeTexto.Gerar("Erro ao Compilar"));
             }
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, "Erro ao compilar o projeto\nerro:" + ex.getMessage(), "deu ruim", 0);
-            MensagemOutput("Erro ao compilar!");
+            OutputTextUpdate(CaixaDeTexto.Gerar("Erro ao compilar!"));
         }
     }
 
@@ -886,7 +872,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_itmRecarregarProjActionPerformed
 
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
-		MensagemOutput("executando nslookup");
+		OutputTextUpdate(CaixaDeTexto.Gerar("executando nslookup"));
 		consolePane.executar("nslookup");
     }//GEN-LAST:event_jButton14ActionPerformed
 
