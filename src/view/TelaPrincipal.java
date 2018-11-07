@@ -170,8 +170,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     public void carregarArquivos() throws IOException {
         System.out.println(abasTexto.getComponentCount());
-        if (abasTexto.getComponentCount() != 0) {
-            for (int i = 1; i <= abasTexto.getComponentCount(); i++) {
+        int qtdAbas = abasTexto.getComponentCount();
+        if (qtdAbas != 0) {
+            for (int i = 1; i <= qtdAbas ; i++) {
                 abasTexto.removeTabAt(i);
             }
         }
