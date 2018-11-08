@@ -16,6 +16,7 @@ import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
@@ -73,6 +74,10 @@ public class ConsolePane extends JPanel implements CommandListener, Terminal {
 			}
 		});
 	}
+	public void setComponentPopupMenu(JPopupMenu popup) { 
+
+		textArea.setComponentPopupMenu(popup);
+	}
 
 	@Override
 	public void commandOutput(String text) {
@@ -116,6 +121,6 @@ public class ConsolePane extends JPanel implements CommandListener, Terminal {
 	}
 
 	public void clearText(){
-		textArea.setText("");
+		textArea.setText(" ");
 	}
 }

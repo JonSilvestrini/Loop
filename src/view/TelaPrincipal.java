@@ -114,7 +114,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
 		ScanFiles scanner = new ScanFiles();
 
 		String path = pastaProjeto.getAbsolutePath().toString();
-
+		
+		OutputTextUpdate("\n\n\n\n\n\n");
 		OutputTextUpdate(CaixaDeTexto.Gerar("Procurando em pasta: " + path));
 
 		scanner.setPath(path);
@@ -451,7 +452,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                 .addComponent(jButton16, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 278, Short.MAX_VALUE))
+                                .addGap(0, 280, Short.MAX_VALUE))
                 );
                 jPanel1Layout.setVerticalGroup(
                         jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -474,7 +475,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                 .addComponent(jSeparator9))
                 );
 
-                jSeparator5.setCursor(new java.awt.Cursor(java.awt.Cursor.N_RESIZE_CURSOR));
+                jSeparator5.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                 OutputInternalFrame.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
                 OutputInternalFrame.setTitle("Output");
@@ -757,7 +758,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }//GEN-LAST:event_Executar
 
     private void jMenuItemLimparOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLimparOutputActionPerformed
-//        txtOutput.setText("");
 	    consolePane.clearText();
     }//GEN-LAST:event_jMenuItemLimparOutputActionPerformed
 
