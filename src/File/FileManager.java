@@ -23,10 +23,14 @@ public class FileManager {
     }
     
     public List<File> ScanFiles(){
-        for (final File arquivo : this.path.listFiles()){
-            if (arquivo.getName().endsWith(".classe")){
-                arquivos.add(arquivo);
+        try {
+            for (final File arquivo : this.path.listFiles()){
+                if (arquivo.getName().endsWith(".classe")){
+                    arquivos.add(arquivo);
+                }
             }
+        } catch (Exception e) {
+            System.out.println("Erro: " + e);
         }
         return arquivos;
     }
